@@ -273,7 +273,6 @@ class MainTests(unittest.TestCase):
         # TODO: Verify that the book with id 1 was added to the user's favorites
         user = User.query.filter_by(id=1).one()
         self.assertIn("Mockingbird", user.favorite_books[0].title)
-        pass
 
     def test_unfavorite_book(self):
         # TODO: Login as the user me1, and add book with id 1 to me1's favorites
@@ -290,5 +289,4 @@ class MainTests(unittest.TestCase):
         self.assertEqual([], user.favorite_books)
         # TODO: Verify that the book with id 1 was removed from the user's 
         # favorites
-        pass
 
