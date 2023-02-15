@@ -45,26 +45,6 @@ def create_user():
     db.session.add(user)
     db.session.commit()
 
-# def create_author():
-#     a1 = Author(name='David Eddings')
-#     db.session.add(a1)
-#     db.session.commit()
-
-# def create_genre():
-#     pass
-    # a1 = Author(name='Harper Lee')
-    # b1 = Book(
-    #     title='To Kill a Mockingbird',
-    #     publish_date=date(1960, 7, 11),
-    #     author=a1
-    # )
-    # db.session.add(b1)
-
-    # a2 = Author(name='Sylvia Plath')
-    # b2 = Book(title='The Bell Jar', author=a2)
-    # db.session.add(b2)
-    # db.session.commit()
-
 #################################################
 # Tests
 #################################################
@@ -274,7 +254,6 @@ class MainTests(unittest.TestCase):
         # TODO: Make a GET request to the /profile/me1 route
         create_user()
         response = self.app.get('/profile/me1', follow_redirects=True)
-        print(response)
         self.assertEqual(response.status_code, 200)
 
         # TODO: Verify that the response shows the appropriate user info
@@ -283,25 +262,32 @@ class MainTests(unittest.TestCase):
 
     def test_favorite_book(self):
         # TODO: Login as the user me1
+        create_books()
         create_user()
         login(self.app, 'me1', 'password')
 
         # TODO: Make a POST request to the /favorite/1 route
 
-        self.app.post('/favourite/1')
+        self.app.post('/favorite/1')
 
         # TODO: Verify that the book with id 1 was added to the user's favorites
-        user = User.query.filter_by(username="me1").one()
-        print(user)
+        user = User.query.filter_by(id=1).one()
+        self.assertIn("Mockingbird", user.favorite_books[0].title)
         pass
 
     def test_unfavorite_book(self):
         # TODO: Login as the user me1, and add book with id 1 to me1's favorites
+        create_books()
         create_user()
         login(self.app, 'me1', 'password')
+        self.app.post('/favorite/1')
+        user = User.query.filter_by(id=1).one()
+        self.assertIn("Mockingbird", user.favorite_books[0].title)
 
         # TODO: Make a POST request to the /unfavorite/1 route
-
+        self.app.post('/unfavorite/1')
+        user = User.query.filter_by(id=1).one()
+        self.assertEqual([], user.favorite_books)
         # TODO: Verify that the book with id 1 was removed from the user's 
         # favorites
         pass
