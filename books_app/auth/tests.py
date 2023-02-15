@@ -9,6 +9,8 @@ from books_app.models import Book, Author, User, Audience
 """
 Run these tests with the command:
 python -m unittest books_app.main.tests
+^^^ might not work, use
+python3 -m unittest discover instead
 """
 
 #################################################
@@ -65,11 +67,11 @@ class AuthTests(TestCase):
         self.assertEqual(new_user.username, "me1")
 
     def test_signup_existing_user(self):
+        create_user()
         post_data = {
             "username": "me1",
             "password": "password"
         }
-        self.app.post('/signup', data=post_data)
         new_user = User.query.filter_by(username="me1").one()
         self.assertEqual(new_user.username, "me1")
         response = self.app.post('/signup', data=post_data)
@@ -81,11 +83,12 @@ class AuthTests(TestCase):
         # - Create a user
         # - Make a POST request to /login, sending the created username & password
         # - Check that the "login" button is not displayed on the homepage
+        create_user()
         post_data = {
             "username": "me1",
             "password": "password"
         }
-        self.app.post('/signup', data=post_data)
+        # self.app.post('/signup', data=post_data)
         new_user = User.query.filter_by(username="me1").one()
         self.assertEqual(new_user.username, "me1")
         response = (self.app.post('/login', data=post_data, follow_redirects=True))
@@ -112,11 +115,7 @@ class AuthTests(TestCase):
         #   an incorrect password
         # - Check that the login form is displayed again, with an appropriate
         #   error message
-        post_data = {
-            "username": "me1",
-            "password": "password"
-        }
-        self.app.post('/signup', data=post_data)
+        create_user()
         post_data = {
             "username": "me1",
             "password": "totallylegit"
@@ -131,11 +130,15 @@ class AuthTests(TestCase):
         # - Log the user in (make a POST request to /login)
         # - Make a GET request to /logout
         # - Check that the "login" button appears on the homepage
+        create_user()
         post_data = {
             "username": "me1",
             "password": "password"
         }
-        self.app.post('/signup', data=post_data)
+        response = (self.app.post('/login', data=post_data, follow_redirects=True))
+        response_text = response.get_data(as_text=True)
+        self.assertIn("You are logged in as me1", response_text)
+        # self.app.post('/signup', data=post_data)
         new_user = User.query.filter_by(username="me1").one()
         self.assertEqual(new_user.username, "me1")
         response = (self.app.get('/logout', follow_redirects=True))
