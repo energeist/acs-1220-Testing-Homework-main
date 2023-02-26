@@ -1,4 +1,5 @@
 import os
+import app
 from unittest import TestCase
 
 from datetime import date
@@ -8,7 +9,7 @@ from books_app.models import Book, Author, User, Audience
 
 """
 Run these tests with the command:
-python -m unittest books_app.main.tests
+python -m unittest books_app.auth.tests
 ^^^ might not work, use
 python3 -m unittest discover instead
 """
